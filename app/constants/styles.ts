@@ -164,15 +164,98 @@ export const quizStyles = StyleSheet.create({
     color: '#4CAF50',
     marginBottom: 30,
   },
-  restartButton: {
-    backgroundColor: '#2196F3',
-    padding: 16,
-    borderRadius: 8,
-    paddingHorizontal: 32,
-  },
+ 
   restartButtonText: {
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
   },
+  
+  // Add these new styles for the result screen buttons and user info
+  resultButtonsContainer: {
+    width: '100%',
+    gap: 12,
+    marginTop: 20,
+  },
+  
+  signOutButton: {
+    backgroundColor: '#f44336',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  
+  signOutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  
+  userInfo: {
+    marginTop: 20,
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+
+  // Add these to your quizStyles
+savingText: {
+  fontSize: 14,
+  color: '#007AFF',
+  textAlign: 'center',
+  marginTop: 10,
+  fontStyle: 'italic',
+},
+savedText: {
+  fontSize: 14,
+  color: '#4CAF50',
+  textAlign: 'center',
+  marginTop: 10,
+  fontWeight: '500',
+},
+errorText: {
+  fontSize: 14,
+  color: '#FF3B30',
+  textAlign: 'center',
+  marginTop: 10,
+  fontWeight: '500',
+},
+
+// Alternative button styles without flex
+backButton: {
+  backgroundColor: '#4CAF50',
+  paddingVertical: 15,
+  paddingHorizontal: 30,
+  borderRadius: 10,
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: 140,
+},
+
+restartButton: {
+  backgroundColor: '#2196F3',
+  paddingVertical: 15,
+  paddingHorizontal: 30,
+  borderRadius: 10,
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: 140,
+},
+
+backButtonText: {
+  color: '#fff',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+
 });

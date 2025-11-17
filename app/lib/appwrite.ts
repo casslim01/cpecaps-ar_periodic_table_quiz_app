@@ -1,17 +1,23 @@
 import { Client, Account, Databases } from 'react-native-appwrite';
 
 export const client = new Client()
-  .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!) // Your Appwrite Endpoint
-  .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!) // Your project ID
-  .setPlatform(process.env.EXPO_PUBLIC_APPWRITE_PLATFORM!); // Set platform to Expo
+  .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!)
+  .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!)
+  .setPlatform(process.env.EXPO_PUBLIC_APPWRITE_PLATFORM!);
 
 export const account = new Account(client);
 export const databases = new Databases(client);
 
-export const DATABASE_ID = process.env.EXPO_PUBLIC_DB_ID!; // Your database ID
+export const DATABASE_ID = process.env.EXPO_PUBLIC_DB_ID!;
+export const COLLECTION_ID = process.env.EXPO_PUBLIC_SCORES_COLLECTION_ID!;
 
-
-export interface RealtimeResponse {
-  events: string[];
-  payload: any;
-}
+// Add debug logging
+console.log('DATABASE_ID:', DATABASE_ID);
+console.log('COLLECTION_ID:', COLLECTION_ID);
+console.log('All env vars:', {
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
+  project: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+  platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM,
+  dbId: process.env.EXPO_PUBLIC_DB_ID,
+  collectionId: process.env.EXPO_PUBLIC_SCORES_COLLECTION_ID
+});

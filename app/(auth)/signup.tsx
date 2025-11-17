@@ -70,7 +70,7 @@ export default function SignUpScreen() {
       }
 
       // Navigate to sign in screen after successful sign up
-      router.replace("/index");
+      router.replace("/");
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
     } finally {
@@ -80,7 +80,7 @@ export default function SignUpScreen() {
 
   // Navigate to sign in screen
   const navigateToSignIn = () => {
-    router.push("/index");
+    router.push("/");
   };
 
   return (
@@ -95,7 +95,7 @@ export default function SignUpScreen() {
           Create Account
         </Text>
         <Text style={styles.subtitle} variant="bodyLarge">
-          Join us to start your quiz journey
+          Sign up to get started with the Chemistry Quiz App
         </Text>
 
         {/* Email input field */}

@@ -1,41 +1,40 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { quizStyles as styles } from '../constants/styles';
+import { useAuth } from '../lib/auth-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useScores } from '../../hooks/useScores';
+import { router } from 'expo-router';
 
-// Sample quiz data - you can replace this with your own questions
-const quizData = [
-  {
-    id: 1,
-    question: "What is the chemical symbol for Gold?",
-    options: ["Go", "Gd", "Au", "Ag"],
-    correctAnswer: 2
-  },
-  {
-    id: 2,
-    question: "Which element has the atomic number 1?",
-    options: ["Helium", "Hydrogen", "Lithium", "Carbon"],
-    correctAnswer: 1
-  },
-  {
-    id: 3,
-    question: "What is the most abundant gas in Earth's atmosphere?",
-    options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
-    correctAnswer: 2
-  }
-];
+interface Question {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+}
 
-export default function Index() {
+interface QuizComponentProps {
+  quizData: Question[];
+  moduleId: string;
+  moduleName: string;
+}
+
+export default function QuizComponent({ quizData, moduleId, moduleName }: QuizComponentProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [scoreSaved, setScoreSaved] = useState(false);
+
+  const { signOut, user } = useAuth();
+  const { saveScore, loading: savingScore, error: saveError } = useScores();
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (selectedAnswer === quizData[currentQuestion].correctAnswer) {
       setScore(score + 1);
     }
@@ -45,7 +44,23 @@ export default function Index() {
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
+      const finalScore = selectedAnswer === quizData[currentQuestion].correctAnswer ? score + 1 : score;
+      setScore(finalScore);
       setQuizFinished(true);
+      
+      if (user) {
+        try {
+          await saveScore({
+            userID: user.$id,
+            moduleID: moduleId,
+            score: finalScore
+          });
+          setScoreSaved(true);
+        } catch (error) {
+          Alert.alert('Error', 'Failed to save your score. Please try again.');
+          console.error('Failed to save score:', error);
+        }
+      }
     }
   };
 
@@ -59,22 +74,50 @@ export default function Index() {
     setScore(0);
     setShowResult(false);
     setQuizFinished(false);
+    setScoreSaved(false);
+  };
+
+  const goBack = () => {
+    router.back();
   };
 
   if (quizFinished) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.resultContainer}>
-          <Text style={styles.resultTitle}>Quiz Complete!</Text>
+          <Text style={styles.resultTitle}>{moduleName} Complete!</Text>
           <Text style={styles.scoreText}>
             Your Score: {score} / {quizData.length}
           </Text>
           <Text style={styles.percentageText}>
             {Math.round((score / quizData.length) * 100)}%
           </Text>
-          <TouchableOpacity style={styles.restartButton} onPress={resetQuiz}>
-            <Text style={styles.restartButtonText}>Restart Quiz</Text>
-          </TouchableOpacity>
+          
+          {savingScore && (
+            <Text style={styles.savingText}>Saving your score...</Text>
+          )}
+          {scoreSaved && (
+            <Text style={styles.savedText}>✓ Score saved successfully!</Text>
+          )}
+          {saveError && (
+            <Text style={styles.errorText}>⚠ Failed to save score</Text>
+          )}
+          
+          <View style={styles.resultButtonsContainer}>
+            <TouchableOpacity style={styles.restartButton} onPress={resetQuiz}>
+              <Text style={styles.restartButtonText}>Restart Quiz</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.backButton} onPress={goBack}>
+              <Text style={styles.backButtonText}>Back to Menu</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {user && (
+            <Text style={styles.userInfo}>
+              Signed in as: {user.email}
+            </Text>
+          )}
         </View>
       </SafeAreaView>
     );
@@ -83,15 +126,13 @@ export default function Index() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Chemistry Quiz</Text>
+          <Text style={styles.title}>{moduleName}</Text>
           <Text style={styles.progress}>
             Question {currentQuestion + 1} of {quizData.length}
           </Text>
         </View>
 
-        {/* Progress Bar */}
         <View style={styles.progressBarContainer}>
           <View 
             style={[
@@ -101,14 +142,12 @@ export default function Index() {
           />
         </View>
 
-        {/* Question */}
         <View style={styles.questionContainer}>
           <Text style={styles.questionText}>
             {quizData[currentQuestion].question}
           </Text>
         </View>
 
-        {/* Answer Options */}
         <View style={styles.optionsContainer}>
           {quizData[currentQuestion].options.map((option, index) => (
             <TouchableOpacity
@@ -134,7 +173,6 @@ export default function Index() {
           ))}
         </View>
 
-        {/* Action Buttons */}
         <View style={styles.buttonContainer}>
           {!showResult ? (
             <TouchableOpacity
@@ -153,7 +191,6 @@ export default function Index() {
           )}
         </View>
 
-        {/* Score Display */}
         <View style={styles.scoreContainer}>
           <Text style={styles.currentScore}>Score: {score} / {quizData.length}</Text>
         </View>

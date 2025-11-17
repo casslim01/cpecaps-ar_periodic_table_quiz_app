@@ -54,8 +54,8 @@ export default function SignInScreen() {
         return;
       }
 
-      // Navigate to home screen after successful sign in
-      router.replace("/");
+      // Navigate to main app after successful sign in
+      router.replace("/(tabs)");
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
     } finally {
@@ -77,7 +77,7 @@ export default function SignInScreen() {
       <View style={styles.content}>
         {/* Header text */}
         <Text style={styles.title} variant="headlineMedium">
-          Welcome Back
+          Periodic Table Quiz App
         </Text>
         <Text style={styles.subtitle} variant="bodyLarge">
           Sign in to continue
